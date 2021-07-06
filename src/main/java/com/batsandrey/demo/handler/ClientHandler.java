@@ -1,4 +1,4 @@
-package com.batsandrey.demo;
+package com.batsandrey.demo.handler;
 
 import com.batsandrey.demo.entity.request.RequestData;
 import com.batsandrey.demo.entity.response.ResponseData;

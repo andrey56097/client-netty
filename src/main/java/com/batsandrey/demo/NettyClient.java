@@ -2,6 +2,7 @@ package com.batsandrey.demo;
 
 import com.batsandrey.demo.decoder.RequestDataDecoder;
 import com.batsandrey.demo.encoder.ResponseDataEncoder;
+import com.batsandrey.demo.handler.ClientHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
