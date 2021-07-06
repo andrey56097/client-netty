@@ -12,10 +12,8 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     public void channelActive(ChannelHandlerContext ctx) {
 
         RequestData msg = new RequestData();
-//        msg.setIntValue(123);
-//        msg.setStringValue("all work and no play makes jack a dull boy");
-//        msg.setStringValue("393030303030303030303030373737");
-        msg.setStringValue("000f393030303030303030303030373737");
+        msg.setIntValue(123);
+        msg.setStringValue("all work and no play makes jack a dull boy");
         ChannelFuture future = ctx.writeAndFlush(msg);
     }
 
