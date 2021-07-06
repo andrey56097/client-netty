@@ -2,7 +2,6 @@ package com.batsandrey.demo;
 
 import com.batsandrey.demo.decoder.RequestDataDecoder;
 import com.batsandrey.demo.encoder.ResponseDataEncoder;
-import com.batsandrey.demo.handler.ClientHandler;
 import com.batsandrey.demo.handler.UptimeClientHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -48,8 +47,7 @@ public class NettyClient implements CommandLineRunner {
                 public void initChannel(SocketChannel ch) {
                     ch.pipeline().addLast(new IdleStateHandler(READ_TIMEOUT, 0, 0), (ChannelHandler) handler,
                             new RequestDataDecoder(),
-                            new ResponseDataEncoder(),
-                            new ClientHandler());
+                            new ResponseDataEncoder());
                 }
             });
 
