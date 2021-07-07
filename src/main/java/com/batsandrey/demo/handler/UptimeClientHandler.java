@@ -1,15 +1,19 @@
 package com.batsandrey.demo.handler;
 
 import com.batsandrey.demo.NettyClient;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.TimeUnit;
 
 @ChannelHandler.Sharable
+@Slf4j
+@AllArgsConstructor
+@NoArgsConstructor
 public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
 
     public long startTime = -1;
@@ -19,6 +23,7 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
         if (startTime < 0) {
             startTime = System.currentTimeMillis();
         }
+
         println("Connected to: " + ctx.channel().remoteAddress());
     }
 
@@ -36,7 +41,7 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
         IdleStateEvent e = (IdleStateEvent) evt;
         if (e.state() == IdleState.READER_IDLE) {
             // The connection was OK but there was no traffic for last period.
-            println("Disconnecting due to no inbound traffic");
+            println("Disconnecting due to no inbound traffic" + " remote address" + ctx.channel().remoteAddress());
             ctx.close();
         }
     }
@@ -48,15 +53,14 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
 
     @Override
     public void channelUnregistered(final ChannelHandlerContext ctx) throws Exception {
-        println("Sleeping for: " + 6 + 's');
+        println("Sleeping for: " + 3 + 's' + " remote address " + ctx.channel().remoteAddress());
 
         ctx.channel().eventLoop().schedule(new Runnable() {
             @Override
             public void run() {
-                println("Reconnecting to: " + NettyClient.HOST + ':' + NettyClient.PORT);
-                NettyClient.connect();
+                NettyClient.reconnect(ctx.channel().remoteAddress());
             }
-        }, 6, TimeUnit.SECONDS);
+        }, 3, TimeUnit.SECONDS);
     }
 
     @Override
@@ -67,9 +71,9 @@ public class UptimeClientHandler extends SimpleChannelInboundHandler<Object> {
 
     public void println(String msg) {
         if (startTime < 0) {
-            System.err.format("[SERVER IS DOWN] %s%n", msg);
+            log.error("[SERVER IS DOWN] {}", msg);
         } else {
-            System.err.format("[UPTIME: %5ds] %s%n", (System.currentTimeMillis() - startTime) / 1000, msg);
+            log.info("[UPTIME: {}s] {}", (System.currentTimeMillis() - startTime) / 1000, msg);
         }
     }
 }
